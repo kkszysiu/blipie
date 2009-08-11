@@ -1,0 +1,27 @@
+/*
+Twiddict
+v 10-06-2008, Tijs
+*/
+
+/* HTML selectors */
+body {
+	font: 12px "Trebuchet MS", Verdana, sans-serif;
+	background: #8BA923 url(images/back.png) repeat-x;
+}
+body, ul, p, form, fieldset, input, img, h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+	padding: 0;
+}
+ul {
+	list-style: none;
+}
+h1 {
+	display: none;
+}
+h2 {
+	font-weight: normal;
+	font-size: 18px;
+	float: left;
+	width: 360px;
+	margin-bottom: 10px;
+}

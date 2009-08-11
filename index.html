@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Furries</title>
+<link href="style.css" media="screen" rel="stylesheet" type="text/css">
+
+<link rel="shortcut icon" href="favicon.ico">
+
+<script type="text/javascript" src="js/jquery.js"></script>
+
+
+<style type="text/css">
+	#menu a {
+		color:#21759B !important;
+	}
+</style>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+                                var iteration = 0;
+                                var max_iterations = 20;
+                                var entries = new Array();
+				var window_height = $(window).height();
+				var window_width = $(window).width();
+
+				var pause = 0;
+                                function runTooltips(entries) {
+                                        if(iteration == max_iterations) {
+                                            iteration = 0;
+                                        }
+                                        $('#tooltip').slideDown('slow');
+                                        $('#corner').show();
+                                        if (entries[iteration].recipient != undefined) {
+                                            recipient = ' > '+entries[iteration].recipient.login
+                                        } else {
+                                            recipient = ' '
+                                        }
+                                        $('#tooltip').html(entries[iteration].user.login+recipient+": "+entries[iteration].body+" <small>at "+entries[iteration].created_at+"</small>");
+                                        setTimeout(function() { $('#corner').hide(); $('#tooltip').slideUp('slow'); iteration++; runTooltips(entries); }, 6000);
+                                }
+                                $.getJSON('http://api.blip.pl/users/kkszysiu/updates.json?include=user,recipient&limit='+max_iterations+'&callback=?',
+                                                function(data) {
+                                                    $.each(data, function(i, blips) {
+                                                        entries[i] = blips
+                                                    });
+                                                    runTooltips(entries);
+                                                }
+                                            );
+
+				function animateCloud1(){
+					$('#cloud-01')
+						.animate({ marginLeft:"+="+(window_width-117)+"px" }, 30000)
+						.animate({ marginLeft:"-="+(window_width-117)+"px" }, 33000, function(){
+							animateCloud1();
+						});
+				};
+				function animateCloud2(){
+					$('#cloud-02')
+						.animate({ marginRight:"+="+(window_width-130)+"px" }, 47000)
+						.animate({ marginRight:"-="+(window_width-130)+"px" }, 40000, function(){
+							animateCloud2();
+						});
+				};
+				animateCloud1();
+				animateCloud2();
+
+				function rand( min, max ) {
+					// http://kevin.vanzonneveld.net
+					// +   original by: Leslie Hoare
+					// +   bugfixed by: Onno Marsman
+					// *     example 1: rand(1, 1);
+					// *     returns 1: 1
+					var argc = arguments.length;
+					if (argc == 0) {
+						min = 0;
+						max = 1024;
+					} else if (argc == 1) {
+						throw new Error('Warning: rand() expects exactly 2 parameters, 1 given');
+					}
+					return Math.floor(Math.random() * (max - min + 1)) + min;
+				}
+
+				var furrie_x = rand((1+200), (window_width-200));
+				var furrie_y = rand((window_height-239)+96, window_height-96);
+				var furrie_height = $('#furrie_body').height();
+				var furrie_width = $('#furrie_body').width();
+
+				//alert("Furrie X: "+furrie_x+" Furrie Y: "+furrie_y+" ");
+
+				function furrie(){
+					$('#furrie_body').css({ left:furrie_x+"px" });
+					$('#furrie_body').css({ top:furrie_y+"px" });
+					$('#furrie').css({ left:furrie_x+"px" });
+					$('#furrie').css({ top:furrie_y+"px" });
+				}
+				furrie();
+
+				function animatemoves() {
+					if(pause == 0) {
+						var furrie_move = rand(1, 4);
+						//alert(furrie_move);
+						if(rand(1, 4) == furrie_move) {
+							$('#powieki').animate({ top:"+=17px" }, 300)
+										.animate({ top:"-=17px" }, 300);
+						}
+						if(furrie_move == 1) {
+							//up
+							var move_up = rand(1, 50);
+							//alert('aktualna pozycja: '+($('#furrie_body').offset().top)+" wysokosc: "+window_height+" offget ground: "+(window_height-($('#furrie_body').offset().top)-move_up)+" w height: "+(window_height-400));
+							if(window_height-($('#furrie_body').offset().top)-move_up < (window_height-420)) {
+								$('#furrie_body').animate({ top:"-="+move_up+"px" }, 1000, function(){
+									animatemoves();
+								});
+							} else {
+								animatemoves();
+							}
+						}
+						if(furrie_move == 2) {
+							//down
+							var move_down = rand(1, 50);
+							//alert("aktualna pozycja: "+($('#furrie_body').offset().top)+" wartosc losowa: "+move_down+" w dol do punktu: "+(($('#furrie_body').offset().top)+move_down)+" dl okna: "+(window_height));
+							if((($('#furrie_body').offset().top)+move_down) < (window_height-200)) {
+								$('#furrie_body').animate({ top:"+="+move_down+"px" }, 1000, function(){
+									animatemoves();
+								});
+							} else {
+								animatemoves();
+							}
+						}
+						if(furrie_move == 3) {
+							//left
+							var move_left = rand(1, 100);
+							if(($('#furrie_body').offset().left)-move_left > 0) {
+								$('#furrie_body').animate({ left:"-="+move_left+"px" }, 1000, function(){
+									animatemoves();
+								});
+							} else {
+								animatemoves();
+							}
+						}
+						if(furrie_move == 4) {
+							//right
+							var move_right = rand(1, 100);
+							if(($('#furrie_body').offset().left)+200 < window_width-96) {
+								$('#furrie_body').animate({ left:"+="+move_right+"px" }, 1000, function(){
+									animatemoves();
+								});
+							} else {
+								animatemoves();
+							}
+						}
+					} //end of if pause == 0
+				}
+				animatemoves();
+
+			});
+		</script>
+
+</head><body>
+
+
+<div id="dialog" title="Basic dialog" style="display:none">
+	<p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+</div>
+
+
+		<div id="content">
+
+			<div id="light" style="position:absolute; background:transparent url(images/sun.png) no-repeat scroll 0 0; height:158px; width:181px; float: left; top: -20px; z-index: 1;"></div>
+
+			<div id="clouds" style="text-align: center; margin-left: 10px; margin-right: 10px; margin-top: 20px;">
+				<div id="cloud-01" style="position:absolute; background:transparent url(images/cloud-fat.png) repeat scroll 0 0; height:71px; width:107px; z-index: 2;"></div>
+				<div id="cloud-02" style="position:absolute; background:transparent url(images/cloud-long.png) repeat scroll 0 0; height:62px; width:120px; top: 55px; right: 1px; z-index: 3;"></div>
+			</div>
+
+
+			<div id="furrie">
+				<div id="furrie_body" style="position:absolute; background:transparent url(images/3.png) no-repeat scroll 0 0; height:96px; width:96px; z-index: 5; ">
+                                    	<div id="tooltip" style="font-size: 11px; line-height: 18px; color: #777777; display:none; position:absolute; padding: 10px; border: 1px solid #e5e5e5; -moz-border-radius: 6px; -moz-box-shadow: rgba(200,200,200,1) 0 4px 18px; background-color: #FFF; height:100px; width:200px; right: 0; left: -48px; bottom: 100px; z-index: 6;">test</div>
+                                    	<div id="corner" style="display:none; position:absolute; background:transparent url(images/dialog.png) no-repeat scroll 0 0; height: 48px; width:61px; left: 90px; top: -6px; z-index: 6;"></div>
+                                        <!--<div id="furrie_mood" style="position:absolute; background:transparent url(images/bubble_hungry.png) no-repeat scroll 0 0; height:33px; width:42px; left: 92px; z-index: 6;"></div>-->
+					<div id="czolka01" style="position:absolute; background:transparent url(images/1.png) no-repeat scroll 0 0; height:96px; width:96px; z-index: 4;"></div>
+					<div id="czolka02" style="position:absolute; background:transparent url(images/2.png) no-repeat scroll 0 0; height:96px; width:96px; z-index: 4;"></div>
+					<div id="powieki" style="position:absolute; background:transparent url(images/5.png) no-repeat scroll 0 0; height:96px; width:96px; top: -17px; z-index: 6;"></div>
+					<div id="cien" style="position:absolute; background:transparent url(images/4.png) no-repeat scroll 0 0; height:25px; width:94px; top: 78px; z-index: 3;"></div>
+				</div>
+			</div>
+
+		</div>
+
+</body></html>
